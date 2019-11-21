@@ -3,27 +3,27 @@
 #include <string>
 using namespace std;
 
-
-
-
-
 class ContactsBook{
 private:
+	// private is usually where object data is stored, 
+	// but we can also put functions here that we don't want the world to access! :O
 	void addContact(){
 		string name, number, email, gamertag;
 		cout << "\n\n======== Adding New Contact ========\n";
 		cout << "Enter the person's full name (first last): ";
-		getline(cin, name); // cin >> name, but it can hold spaces
+		getline(cin, name);		// cin >> name, but it can hold spaces
 		cout << "Enter the person's number (xxx.xxx.xxxx): ";
-		getline(cin, number);
+		getline(cin, number);	// takes in number
 		cout << "Enter the person's email: ";
-		getline(cin, email);
+		getline(cin, email);	// ... and email
 		cout << "GAMERS ONLY - enter the person's gamertag (\"N/A\" for non-gamers): ";
-		getline(cin, gamertag);
+		getline(cin, gamertag);	// ... and gamer tag
 		
+		// here, we put all of the names and what-not into one string.
 		string full = name + "\t" + number + "\t" + email + "\t" + gamertag;
 		
 		ofstream writer;
+		// ios::app means that the writer will start writing at the END of the pre-existing stuff inside the .txt file. if you don't have this, then the writer will erase the whole file, and then start writing :)
 		writer.open("contacts LG.txt", ios::app);
 		writer << full << endl;
 		writer.close();
@@ -34,16 +34,23 @@ private:
 		string lineBuf, search;
 		size_t found; 			// return -1 if we don't find the string
 		bool isFound = false;	// used for checking if the contact isn't found at all
-		reader.open("contacts LG.txt");
+		reader.open("contacts LG.txt"); // make sure that you got the file name 100% right!
 		
 		cout << "\n\n======== Search Contact ========\n";
 		cout << "Supports name, phone number, email, and gamertag search." << endl << endl;
 		cout << "Enter the contact you want to look up: ";
 		getline(cin, search);
 		
+		// this while loop looks at the file, and goes line by line.
+		// for each line, it checks whether our search field is present in the line.
+		// if it's not, then we do nothing. but if it's there, then we cout it.
+		// .eof() means end of file, and will return true if you're at the end of the file.
+		// so, while(!reader.eof()) means "while reader is NOT at the end of file {do stuff}"
 		while (!reader.eof()){
 			getline(reader, lineBuf);
 			found = lineBuf.find(search);
+			
+			// string::npos is a special way of writing that "-1" value.
 			if (found != string::npos){
 				cout << endl << "found contact: " << lineBuf << endl << endl;
 				isFound = true;
