@@ -41,13 +41,41 @@ public:
 	
 	void test(int x){
 		char ch;
-		string input = "", test, inputWord, testWord;
+		string input = "", test, inputWord, testWord, username;
 		clock_t c1, c2;
 		double deltaSeconds, wpm, accuracy;
-		int correctChar = 0, testSpace = 0, inputSpace = 0, wordCount = 0;
+		int correctChar = 0, testSpace = 0, inputSpace = 0, wordCount = 0, indexConfig = 0, curIndex = 0, nPrompts = 0;
 		
-		test = "The quick brown fox jumped over the lazy dog. I like my dog, his name is Moose.";
+		cout <<"\nEnter your name: ";
+		cin.ignore();
+		getline(cin, username);
 		
+		ifstream readTest("textPrompt.txt"), readIndex("indexConfig.txt");
+		
+		readIndex >> indexConfig;
+		
+		while(!readTest.eof()){
+			getline(readTest, test);
+			nPrompts++;
+		}
+		readTest.clear();
+		readTest.seekg(0, ios::beg);
+		
+		
+		if (indexConfig > nPrompts - 1)
+			indexConfig = 0;
+		
+		curIndex = indexConfig;
+		
+		while (!readTest.eof() && curIndex >= 0){
+			getline(readTest, test);
+			curIndex--;
+		}
+		
+		readIndex.close();
+		ofstream writeIndex("indexConfig.txt");
+		indexConfig++;
+		writeIndex << indexConfig;
 		
 		if (x == 1){		// normal
 			cout << "\n";
@@ -71,7 +99,7 @@ public:
 			cout << "Start typing now. Press [ENTER] to finish:\n";
 			c1 = clock();
 		}
-		cin.ignore();
+		
 		getline(cin, input);
 		
 		// after getline, the user hits [ENTER]. stop timer.
@@ -113,11 +141,23 @@ public:
 		cout << "time elpased (seconds): " << deltaSeconds << endl;
 		cout << "words per minute:       " << wpm << endl;
 		cout << "word accuracy:          " << accuracy << "%" << endl;
-		
+		writeScore(username, wpm, accuracy);
+	}
+	
+	void writeScore(string name, double score, double acc){
+		ofstream writeScore("scoreboard.txt", ios::app);
+		writeScore << name << "\t\twpm: " << score << "\t accuracy: " << acc << "%" << endl;
 	}
 	
 	void scoreboard(){
-		;
+		ifstream readScore("scoreboard.txt");
+		string printScore;
+		cout << "\n\n======== Scores ========\n";
+		
+		while (!readScore.eof()){
+			getline(readScore, printScore);
+			cout << printScore << endl;
+		}
 	}
 };
 
@@ -129,7 +169,3 @@ int main(){
 	game.menu();
 	return 0;
 }
-
-
-
-
